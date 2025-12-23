@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master_digital - Juegos Digitales PS4 y PS5</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <h1 class="logo">🎮 Master_digital</h1>
+                <div class="nav-menu">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#catalogo-ps4-ps5">PS4 / PS5</a>
+                    <a href="#catalogo-ps5">Exclusivos PS5</a>
+                    <a href="#como-funciona">¿Cómo Funciona?</a>
+                    <a href="#preguntas">Preguntas Frecuentes</a>
+                    <a href="#contacto">Contacto</a>
+                    <a href="#carrito" class="btn-carrito">
+                        🛒 Carrito <span id="contador-carrito">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Sección Hero -->
+        <section id="inicio" class="hero">
+            <div class="container">
+                <h2>Bienvenido a Master_digital</h2>
+                <p>Juegos Digitales para PS4 y PS5 🎮</p>
+                <p class="hero-subtitle">Entrega en 15 minutos - 1 hora | Garantía Ilimitada</p>
+
+                <!-- Buscador -->
+                <div class="buscador-container">
+                    <div class="buscador">
+                        <span class="icono-buscar">🔍</span>
+                        <input type="text" id="input-buscar" placeholder="Buscar juego por nombre..." />
+                        <button id="btn-limpiar-busqueda" style="display: none;">✖</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catálogo PS4 / PS5 -->
+        <section id="catalogo-ps4-ps5" class="catalogo-section">
+            <div class="container">
+                <h2 class="titulo-seccion">Juegos PS4 / PS5</h2>
+                <p class="subtitulo">Compatible con ambas consolas</p>
+                <div id="catalogo-ps4-ps5-grid" class="productos-grid"></div>
+            </div>
+        </section>
+
+        <!-- Catálogo Exclusivos PS5 -->
+        <section id="catalogo-ps5" class="catalogo-section">
+            <div class="container">
+                <h2 class="titulo-seccion">Exclusivos PS5</h2>
+                <p class="subtitulo">Solo disponibles para PlayStation 5</p>
+                <div id="catalogo-ps5-grid" class="productos-grid"></div>
+            </div>
+        </section>
+
+        <!-- Resultados de búsqueda -->
+        <section id="resultados-busqueda" class="catalogo-section" style="display: none;">
+            <div class="container">
+                <h2 class="titulo-seccion">Resultados de Búsqueda</h2>
+                <p class="subtitulo" id="texto-resultados"></p>
+                <div id="resultados-grid" class="productos-grid"></div>
+            </div>
+        </section>
+
+        <!-- Cómo funciona -->
+        <section id="como-funciona" class="como-funciona-section">
+            <div class="container">
+                <h2 class="titulo-seccion">¿Cómo Funciona?</h2>
+                <div class="pasos-grid">
+                    <div class="paso-card">
+                        <div class="paso-numero">1</div>
+                        <h3>Elige tu Juego</h3>
+                        <p>Usa el buscador o navega el catálogo de PS4 / PS5</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-numero">2</div>
+                        <h3>Consulta Precio</h3>
+                        <p>Agrega al carrito y consulta precio y disponibilidad por WhatsApp</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-numero">3</div>
+                        <h3>Realiza el Pago</h3>
+                        <p>Paga por transferencia a Mercado Pago o Banco Falabella</p>
+                    </div>
+                    <div class="paso-card">
+                        <div class="paso-numero">4</div>
+                        <h3>Recibe y Juega</h3>
+                        <p>Te enviaremos una cuenta nueva con el juego en 15 min - 1 hora máximo</p>
+                    </div>
+                </div>
+                <div class="info-importante">
+                    <h3>⚠️ Importante:</h3>
+                    <ul>
+                        <li>Los juegos se entregan mediante <strong>cuentas nuevas</strong></li>
+                        <li>Debes crear un <strong>usuario nuevo</strong> en tu PlayStation con los datos que te proporcionamos</li>
+                        <li>El juego se descarga desde la cuenta que te entregamos</li>
+                        <li>Podrás jugar con tu usuario principal una vez descargado</li>
+                        <li><strong>Garantía ilimitada</strong> en todos nuestros juegos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Carrito -->
+        <section id="carrito" class="carrito-section">
+            <div class="container">
+                <h2 class="titulo-seccion">Carrito de Consulta</h2>
+                <div id="carrito-contenido">
+                    <div id="carrito-productos"></div>
+                    <div class="carrito-resumen">
+                        <div class="carrito-info">
+                            <p><strong>Total de juegos seleccionados:</strong></p>
+                            <p id="total-juegos"><strong>0</strong></p>
+                        </div>
+                        <button id="btn-consultar-whatsapp" class="btn-consultar">💬 Consultar Precio y Disponibilidad</button>
+                        <button id="btn-vaciar" class="btn-vaciar">Vaciar Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- Modal Detalle de Juego -->
+<div id="modal-juego" class="modal" style="display:none;">
+    <div class="modal-contenido">
+        <span id="cerrar-modal" class="modal-cerrar">&times;</span>
+        <h3 id="modal-nombre"></h3>
+        <p id="modal-plataforma"></p>
+
+        <label for="modal-cantidad">Cantidad:</label>
+        <input id="modal-cantidad" type="number" min="1" value="1">
+
+        <label for="modal-plataforma-select">Tipo de cuenta:</label>
+        <select id="modal-plataforma-select">
+            <option value="primaria">Cuenta primaria</option>
+            <option value="secundaria">Cuenta secundaria</option>
+        </select>
+
+        <button id="modal-btn-agregar" class="btn-agregar">Agregar al carrito</button>
+    </div>
+</div>
+
+
+        <!-- Preguntas Frecuentes -->
+        <section id="preguntas" class="faq-section">
+            <div class="container">
+                <h2 class="titulo-seccion">Preguntas Frecuentes</h2>
+                <div class="faq-container">
+
+                    <!-- ¿Qué es cuenta primaria y secundaria? -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿Qué significa cuenta primaria y secundaria?</button>
+                        <div class="faq-respuesta">
+                            <p><strong>Cuenta primaria:</strong> te permite jugar con tu usuario personal (o cualquier otro usuario de tu consola), guardando trofeos, logros y progreso en tu propia cuenta. Solo creas un usuario nuevo con los datos que te entrega Master_digital, descargas el juego y luego lo juegas desde tu perfil principal.</p>
+                            <p><strong>Cuenta secundaria:</strong> solo podrás jugar desde la cuenta que te entregamos, ya que ahí se guarda todo tu avance. Es necesario que tu PS4 o PS5 esté conectada a internet para iniciar sesión y jugar.</p>
+                            <p><strong>Importante:</strong> en ambos tipos de cuenta tendrás el juego completo, con todos los modos disponibles (historia, carrera, online, etc.) y con <strong>garantía ilimitada</strong> de Master_digital.</p>
+                        </div>
+                    </div>
+
+                    <!-- ¿El juego viene completo y cuánto dura? -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿El juego viene completo? ¿Incluye historia, carrera y modo online?</button>
+                        <div class="faq-respuesta">
+                            <p>Sí. Todos los juegos que vendemos son versiones completas, tal como si los compraras en disco físico o directamente en PlayStation Store. Tendrás acceso a todos los modos que el juego incluya: campaña, historia, carrera, multijugador online, etc.</p>
+                            <p>La duración del juego depende de cada título, pero tu acceso no tiene fecha de vencimiento mientras respetes las condiciones de uso de la cuenta.</p>
+                        </div>
+                    </div>
+
+                    <!-- ¿El juego dura para siempre? -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿El juego dura para siempre?</button>
+                        <div class="faq-respuesta">
+                            <p>Sí. Una vez que tienes tu cuenta configurada, el juego queda asociado a esa cuenta de forma permanente. Podrás seguir jugando mientras mantengas la cuenta en tu consola y no se modifiquen los datos que te entregamos.</p>
+                            <p>Además, todas las compras en Master_digital cuentan con <strong>garantía ilimitada</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- ¿Puedo borrar y reinstalar? -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿Puedo eliminar el juego y volver a instalarlo después?</button>
+                        <div class="faq-respuesta">
+                            <p>Sí. Puedes borrar el juego de tu consola y descargarlo nuevamente cuantas veces lo necesites.</p>
+                            <p>Ten en cuenta que el juego solo puede estar activo en una consola a la vez. Si quieres usarlo en otra PS4 o PS5, primero debes eliminarlo de la consola anterior.</p>
+                        </div>
+                    </div>
+
+                    <!-- ¿Tengo tiempo límite para instalar? -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿Tengo tiempo límite para instalar el juego después de comprar?</button>
+                        <div class="faq-respuesta">
+                            <p>No. Una vez realizada la compra puedes instalar el juego cuando quieras, aunque pasen horas, semanas o meses.</p>
+                            <p>Tu acceso queda asociado a la cuenta que te entregamos y no se pierde por falta de uso.</p>
+                        </div>
+                    </div>
+
+                    <!-- Garantía ilimitada -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿En qué consiste la garantía ilimitada de Master_digital?</button>
+                        <div class="faq-respuesta">
+                            <p>En Master_digital trabajamos hace años con juegos digitales y ofrecemos garantía ilimitada real en todas las cuentas. Si surge algún problema con el acceso al juego, nos contactas y lo solucionamos.</p>
+                            <p>Los juegos se compran de forma legal en PlayStation Store. Puedes formatear tu consola o borrar juegos y luego volver a instalarlos. También puedes mover tu juego a otra PS4 o PS5 siempre que lo elimines de la consola original, ya que cada compra es válida para una sola consola a la vez.</p>
+                        </div>
+                    </div>
+
+                    <!-- Métodos de pago -->
+                    <div class="faq-item">
+                        <button class="faq-pregunta">¿Qué métodos de pago aceptan?</button>
+                        <div class="faq-respuesta">
+                            <p>Aceptamos transferencias a:<br>
+                                • Mercado Pago (cuenta 1073507582)<br>
+                                • Banco Falabella (cuenta 19811783404)<br>
+                                Todos a nombre de Israel Monarez, RUT 22.274.234-K.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacto -->
+        <section id="contacto" class="contacto-section">
+            <div class="container">
+                <h2 class="titulo-seccion">Contáctanos</h2>
+                <div class="contacto-grid">
+                    <div class="contacto-info">
+                        <h3>¿Tienes alguna duda?</h3>
+                        <p>Estamos disponibles para ayudarte</p>
+                        <div class="contacto-item">
+                            <span class="icono">📱</span>
+                            <div>
+                                <p><strong>WhatsApp</strong></p>
+                                <a href="https://wa.me/56994877783" target="_blank">+56 9 9487 7783</a>
+                            </div>
+                        </div>
+                        <div class="contacto-item">
+                            <span class="icono">📸</span>
+                            <div>
+                                <p><strong>Instagram</strong></p>
+                                <a href="https://instagram.com/Master_digital23" target="_blank">@Master_digital23</a>
+                            </div>
+                        </div>
+                        <div class="contacto-item">
+                            <span class="icono">🕐</span>
+                            <div>
+                                <p><strong>Horario de atención</strong></p>
+                                <p>Lunes a Domingo: 10:00 - 22:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formulario-contacto">
+                        <h3>Envíanos un mensaje</h3>
+                        <form id="form-contacto">
+                            <input type="text" id="nombre" placeholder="Tu nombre" required>
+                            <input type="email" id="email" placeholder="Tu email" required>
+                            <textarea id="mensaje" placeholder="Tu consulta" rows="5" required></textarea>
+                            <button type="submit" class="btn-enviar">Enviar por WhatsApp</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3>Master_digital</h3>
+                    <p>Tu tienda de confianza para juegos digitales PS4 y PS5</p>
+                    <p>Garantía ilimitada • Entrega rápida • Soporte 24/7</p>
+                </div>
+                <div>
+                    <h4>Enlaces</h4>
+                    <a href="#catalogo-ps4-ps5">PS4 / PS5</a>
+                    <a href="#catalogo-ps5">Exclusivos PS5</a>
+                    <a href="#como-funciona">¿Cómo Funciona?</a>
+                    <a href="#preguntas">FAQ</a>
+                    <a href="#contacto">Contacto</a>
+                </div>
+                <div>
+                    <h4>Contacto</h4>
+                    <p>WhatsApp: +56 9 9487 7783</p>
+                    <p>Instagram: @Master_digital23</p>
+                    <p>Horario: 10:00 - 22:00</p>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2025 Master_digital - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
