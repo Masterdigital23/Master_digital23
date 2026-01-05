@@ -759,8 +759,11 @@ function agregarAlCarrito(id) {
     
     const cantidad = parseInt(document.getElementById('modal-cantidad')?.value || 1, 10);
     const tipoCuenta = document.getElementById('modal-tipo-cuenta')?.value || 'primaria';
-    const plataformaSelect = document.getElementById('modal-plataforma-select');
-    const plataforma = plataformaSelect ? plataformaSelect.options[plataformaSelect.selectedIndex].textContent : juego.plataforma;
+    const plataformaSelect = document.getElementByIdmodal-plataforma-select
+    const plataforma = plataformaSelect ? 
+  plataformaSelect.options[plataformaSelect.selectedIndex].textContent : 
+  juego.plataforma
+
     
     if (cantidad < 1 || cantidad > 10) return mostrarToast('Cantidad entre 1-10', 'error');
     
@@ -966,36 +969,39 @@ function abrirModalProducto(id) {
     
     const select = document.getElementById('modal-plataforma-select');
     select.innerHTML = ''; // Limpiar opciones anteriores
-    
+    select.disabled = false;
+
     // Lógica para plataformas
     const plataformas = juego.plataforma.toLowerCase();
-    
-    if (plataformas.includes('ps5') && !plataformas.includes('ps4')) {
-        // Exclusivo PS5 - solo una opción bloqueada
-        const opt = document.createElement('option');
-        opt.value = 'ps5';
-        opt.textContent = 'PS5 (Exclusivo)';
-        opt.disabled = true;
-        select.appendChild(opt);
-    } else if (plataformas.includes('ps4') && !plataformas.includes('ps5')) {
-        // Exclusivo PS4 - solo una opción bloqueada
-        const opt = document.createElement('option');
-        opt.value = 'ps4';
-        opt.textContent = 'PS4 (Exclusivo)';
-        opt.disabled = true;
-        select.appendChild(opt);
-    } else {
-        // PS4 PS5 - opciones separadas seleccionables
-        const opt1 = document.createElement('option');
-        opt1.value = 'ps4';
-        opt1.textContent = 'PS4';
-        select.appendChild(opt1);
-        
-        const opt2 = document.createElement('option');
-        opt2.value = 'ps5';
-        opt2.textContent = 'PS5';
-        select.appendChild(opt2);
-    }
+
+if (plataformas.includes("ps5") && !plataformas.includes("ps4")) {
+  // Exclusivo PS5: opción fija PS5, sin poder cambiar
+  const opt = document.createElement("option");
+  opt.value = "ps5";
+  opt.textContent = "PS5";
+  select.appendChild(opt);
+  select.disabled = true;        // evita que el usuario cambie
+} else if (plataformas.includes("ps4") && !plataformas.includes("ps5")) {
+  // Exclusivo PS4
+  const opt = document.createElement("option");
+  opt.value = "ps4";
+  opt.textContent = "PS4";
+  select.appendChild(opt);
+  select.disabled = true;
+} else {
+  // Tiene PS4 y PS5
+  select.disabled = false;
+  const opt1 = document.createElement("option");
+  opt1.value = "ps4";
+  opt1.textContent = "PS4";
+  select.appendChild(opt1);
+
+  const opt2 = document.createElement("option");
+  opt2.value = "ps5";
+  opt2.textContent = "PS5";
+  select.appendChild(opt2);
+}
+
     
     modal.classList.add('activo');
 }
