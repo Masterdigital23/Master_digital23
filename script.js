@@ -551,41 +551,57 @@ function renderizarOfertas() {
   grid.innerHTML = '';
   
   ofertas.forEach((oferta, index) => {
-    // Buscar juego en base de datos (normalizando nombres)
-    const nombreLimpio = oferta.nombre.replace(/PS4|PS5/gi, '').trim().toLowerCase();
-    const juegoBase = todosLosJuegos.find(j => 
-      j.nombre.toLowerCase().replace(/PS4|PS5/gi, '').trim().includes(nombreLimpio)
-    );
+    // SOLUCIÓN: Buscar por nombre EXACTO primero, luego por coincidencia
+    const nombreOferta = oferta.nombre.toLowerCase().trim();
+    
+    // 1. Buscar coincidencia EXACTA primero
+    let juegoBase = todosLosJuegos.find(j => {
+      const nombreJuego = j.nombre.toLowerCase().replace(/\(ps4\/ps5\)|ps4|ps5|\/ /gi, '').trim();
+      return nombreJuego === nombreOferta;
+    });
+    
+    // 2. Si no encuentra, buscar que el nombre del juego CONTENGA el de la oferta
+    if (!juegoBase) {
+      juegoBase = todosLosJuegos.find(j => {
+        const nombreJuego = j.nombre.toLowerCase().replace(/\(ps4\/ps5\)|ps4|ps5|\/ /gi, '').trim();
+        // Verificar que coincida PERO que NO sea una versión diferente (ej: 11 vs 1)
+        return nombreJuego.includes(nombreOferta) && 
+               !nombreJuego.match(/\d+/) || // Si no tiene números, ok
+               nombreJuego.match(/\d+/)?.[0] === nombreOferta.match(/\d+/)?.[0]; // Si tiene, deben coincidir
+      });
+    }
     
     // Plataforma del juego real (o fallback)
-    const plataforma = juegoBase ? juegoBase.plataforma : 'PS4 PS5';
-    const esExclusivoPS5 = plataforma.toLowerCase().includes('ps5') && !plataforma.toLowerCase().includes('ps4');
+    const plataforma = juegoBase ? juegoBase.plataforma : 'PS4 / PS5';
+    const esExclusivoPS5 = plataforma.toLowerCase().includes('ps5') && 
+                          !plataforma.toLowerCase().includes('ps4');
     
     // Imagen con fallback
-    const imagen = juegoBase?.imagen || `https://dummyimage.com/300x220/1a1e3a/afffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}`;
+    const imagen = juegoBase?.imagen || 
+      `https://dummyimage.com/300x220/1a1e3a/ffffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}`;
     
     const card = document.createElement('div');
     card.className = `producto-card ${esExclusivoPS5 ? 'ps5-exclusive' : ''}`;
-    
     card.innerHTML = `
       <img src="${imagen}" alt="${oferta.nombre}" class="producto-img" loading="lazy" 
-           onerror="this.src='https://dummyimage.com/300x220/1a1e3a/afffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}'; this.style.objectFit='contain';">
+           onerror="this.src='https://dummyimage.com/300x220/1a1e3a/ffffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}'; this.style.objectFit='contain'">
       <span class="producto-plataforma">${esExclusivoPS5 ? 'PS5 EXCLUSIVO' : plataforma}</span>
       <div class="producto-info">
         <h3>${oferta.nombre}</h3>
         <div class="precio-oferta">
-          <div class="precio-primaria">Primaria $${oferta.primaria.toLocaleString('es-CL')}</div>
-          <div class="precio-secundaria">Secundaria $${oferta.secundaria.toLocaleString('es-CL')}</div>
+          <div class="precio-primaria">Primaria: $${oferta.primaria.toLocaleString('es-CL')}</div>
+          <div class="precio-secundaria">Secundaria: $${oferta.secundaria.toLocaleString('es-CL')}</div>
         </div>
-        <div class="producto-controles">
-          <button class="btn-agregar" onclick="abrirModalOferta(${index})">Ver producto</button>
-        </div>
+      </div>
+      <div class="producto-controles">
+        <button class="btn-agregar" onclick="abrirModalOferta(${index})">Ver producto</button>
       </div>
     `;
     
     grid.appendChild(card);
   });
 }
+
 
 
 function actualizarPaginacionOfertas() {
@@ -1370,6 +1386,132 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ===== MODALES LEGALES - VERSIÓN CORREGIDA =====
+document.addEventListener('click', function(e) {
+  const target = e.target;
+  
+  // Detectar clicks en links legales (con o sin #)
+  if (target.matches('a[href="#privacidad"], a[href="privacidad"]')) {
+    e.preventDefault();
+    mostrarModalLegal('privacidad');
+  } else if (target.matches('a[href="#terminos"], a[href="terminos"]')) {
+    e.preventDefault();
+    mostrarModalLegal('terminos');
+  } else if (target.matches('a[href="#aviso"], a[href="aviso"]')) {
+    e.preventDefault();
+    mostrarModalLegal('aviso');
+  }
+  
+  // Cerrar modal
+  if (target.closest('#btn-cerrar-legal') || target.classList.contains('modal-legal')) {
+    cerrarModalLegal();
+  }
+});
+
+function mostrarModalLegal(tipo) {
+  const contenidos = {
+    privacidad: `
+      <h2>Política de Privacidad</h2>
+      <h3>1. Información que Recopilamos</h3>
+      <p>En Master Digital recopilamos únicamente la información necesaria para procesar tu pedido:</p>
+      <ul>
+        <li>Nombre de contacto</li>
+        <li>Número de WhatsApp</li>
+        <li>Información de pago (cuenta bancaria/Mercado Pago)</li>
+      </ul>
+      <h3>2. Uso de la Información</h3>
+      <p>Tu información se utiliza exclusivamente para:</p>
+      <ul>
+        <li>Procesar tu pedido de juegos digitales</li>
+        <li>Enviar las credenciales de acceso</li>
+        <li>Brindar soporte técnico</li>
+        <li>Gestionar la garantía ilimitada</li>
+      </ul>
+      <h3>3. Protección de Datos</h3>
+      <p>Implementamos medidas de seguridad para proteger tu información personal. No compartimos tus datos con terceros.</p>
+      <h3>4. Cookies</h3>
+      <p>Utilizamos cookies técnicas para mejorar tu experiencia de navegación.</p>
+      <h3>5. Tus Derechos</h3>
+      <p>Puedes solicitar acceso, modificación o eliminación de tus datos contactándonos por WhatsApp.</p>
+    `,
+    terminos: `
+      <h2>Términos y Condiciones</h2>
+      <h3>1. Aceptación de Términos</h3>
+      <p>Al realizar una compra en Master Digital, aceptas estos términos y condiciones.</p>
+      <h3>2. Naturaleza del Servicio</h3>
+      <p>Vendemos cuentas digitales de PlayStation con juegos originales.</p>
+      <ul>
+        <li>Entrega: 15 minutos a 1 hora máximo</li>
+        <li>Garantía: Ilimitada en todos los juegos</li>
+        <li>Cuentas: 100% nuevas, nunca usadas</li>
+      </ul>
+      <h3>3. Responsabilidades del Cliente</h3>
+      <ul>
+        <li>No compartir las credenciales con terceros</li>
+        <li>Mantener la cuenta activada en UNA sola consola</li>
+        <li>No cambiar datos de la cuenta</li>
+      </ul>
+      <h3>4. Garantía</h3>
+      <p>Reemplazo gratuito e inmediato ante cualquier problema técnico.</p>
+      <h3>5. Métodos de Pago</h3>
+      <p>Aceptamos transferencias bancarias y Mercado Pago.</p>
+      <h3>6. Soporte</h3>
+      <p>Atención por WhatsApp: Lunes a Domingo, 10:00 - 22:00 hrs.</p>
+    `,
+    aviso: `
+      <h2>Aviso Legal</h2>
+      <h3>Identificación</h3>
+      <p><strong>Razón Social:</strong> Israel Monarez<br>
+      <strong>RUT:</strong> 22.274.234-K<br>
+      <strong>Ubicación:</strong> Santiago, Chile<br>
+      <strong>Contacto:</strong> +56 9 9487 7783</p>
+      <h3>Propiedad Intelectual</h3>
+      <p>Todas las marcas, logotipos y nombres de juegos pertenecen a sus respectivos propietarios (Sony, PlayStation, desarrolladores). Master Digital es un distribuidor autorizado de cuentas digitales PlayStation.</p>
+      <h3>Limitación de Responsabilidad</h3>
+      <p>Master Digital no se hace responsable por:</p>
+      <ul>
+        <li>Mal uso de las credenciales por parte del cliente</li>
+        <li>Baneos por comportamiento inapropiado en juegos online</li>
+        <li>Problemas de conexión a internet del cliente</li>
+      </ul>
+      <h3>Legislación Aplicable</h3>
+      <p>Este servicio se rige por las leyes de Chile.</p>
+      <p><strong>Última actualización:</strong> Enero 2026</p>
+    `
+  };
+  
+  // Buscar modal existente
+  const modal = document.getElementById('modal-legal');
+  const contenidoDiv = document.getElementById('contenido-legal');
+  
+  if (!modal || !contenidoDiv) {
+    console.error('Modal legal no encontrado en el HTML');
+    return;
+  }
+  
+  // Insertar contenido
+  contenidoDiv.innerHTML = contenidos[tipo] || '<p>Contenido no disponible</p>';
+  
+  // Mostrar modal
+  modal.classList.add('activo');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalLegal() {
+  const modal = document.getElementById('modal-legal');
+  if (modal) {
+    modal.classList.remove('activo');
+    document.body.style.overflow = '';
+  }
+}
+
+// Cerrar con tecla ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    cerrarModalLegal();
+  }
+});
+
 
 
 // ===== EXPORTAR FUNCIONES =====
@@ -1378,3 +1520,5 @@ window.eliminarDelCarrito = eliminarDelCarrito;
 window.vaciarCarrito = vaciarCarrito;
 window.consultarPorWhatsApp = consultarPorWhatsApp;
 window.abrirModalProducto = abrirModalProducto;
+window.abrirModalLegal = abrirModalLegal;
+window.cerrarModalLegal = cerrarModalLegal;
