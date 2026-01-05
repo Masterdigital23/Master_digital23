@@ -537,48 +537,41 @@ function renderizarOfertas() {
   grid.innerHTML = '';
   
   ofertas.forEach((oferta, index) => {
-    // FIX: Buscar normalizando espacios y eliminando "PS4/PS5"
-    const nombreLimpio = oferta.nombre.replace(/ PS[45].*$/i, '').trim();
+    // Buscar juego en base de datos (normalizando nombres)
+    const nombreLimpio = oferta.nombre.replace(/PS4|PS5/gi, '').trim().toLowerCase();
     const juegoBase = todosLosJuegos.find(j => 
-      j.nombre.toLowerCase().replace(/ PS[45].*$/i, '').trim().includes(
-        nombreLimpio.toLowerCase()
-      )
+      j.nombre.toLowerCase().replace(/PS4|PS5/gi, '').trim().includes(nombreLimpio)
     );
     
-    // ✅ SIEMPRE renderiza (usa dummy si no encuentra)
-    const imagen = juegoBase?.imagen || 
-      `https://dummyimage.com/300x220/1a1e3a/ffffff&text=${encodeURIComponent(oferta.nombre.slice(0,10))}`;
+    // Plataforma del juego real (o fallback)
+    const plataforma = juegoBase ? juegoBase.plataforma : 'PS4 PS5';
+    const esExclusivoPS5 = plataforma.toLowerCase().includes('ps5') && !plataforma.toLowerCase().includes('ps4');
+    
+    // Imagen con fallback
+    const imagen = juegoBase?.imagen || `https://dummyimage.com/300x220/1a1e3a/afffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}`;
     
     const card = document.createElement('div');
-    card.className = 'producto-card';
+    card.className = `producto-card ${esExclusivoPS5 ? 'ps5-exclusive' : ''}`;
+    
     card.innerHTML = `
-      <img src="${imagen}" 
-           alt="${oferta.nombre}" 
-           class="producto-img" 
-           loading="lazy"
-           onerror="this.src='https://dummyimage.com/300x220/1a1e3a/ffffff&text=${encodeURIComponent(oferta.nombre.slice(0,10))}'">
+      <img src="${imagen}" alt="${oferta.nombre}" class="producto-img" loading="lazy" 
+           onerror="this.src='https://dummyimage.com/300x220/1a1e3a/afffff?text=${encodeURIComponent(oferta.nombre.slice(0,10))}'; this.style.objectFit='contain';">
+      <span class="producto-plataforma">${esExclusivoPS5 ? 'PS5 EXCLUSIVO' : plataforma}</span>
       <div class="producto-info">
         <h3>${oferta.nombre}</h3>
         <div class="precio-oferta">
-          <div class="precio-primaria">Primaria: $${oferta.primaria.toLocaleString('es-CL')}</div>
-          <div class="precio-secundaria">Secundaria: $${oferta.secundaria.toLocaleString('es-CL')}</div>
+          <div class="precio-primaria">Primaria $${oferta.primaria.toLocaleString('es-CL')}</div>
+          <div class="precio-secundaria">Secundaria $${oferta.secundaria.toLocaleString('es-CL')}</div>
         </div>
         <div class="producto-controles">
-          <button class="btn-agregar" onclick="abrirModalProducto(${juegoBase?.id || -index})">
-            Ver producto
-          </button>
+          <button class="btn-agregar" onclick="abrirModalOferta(${index})">Ver producto</button>
         </div>
       </div>
     `;
+    
     grid.appendChild(card);
   });
 }
-
-
-
-
-
-
 
 
 function actualizarPaginacionOfertas() {
