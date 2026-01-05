@@ -278,6 +278,12 @@ let seccionActual = 'inicio';
 let juegoSeleccionado = null;
 let contadorCarritoIcono = null;
 
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'modal-producto' || e.target.id === 'modal-cerrar') {
+    juegoSeleccionado = null;
+  }
+});
+
 // ===== OFERTAS COMPLETAS =====
 const ofertas = [
   { nombre: 'FC 26', primaria: 27000, secundaria: 22000 },
@@ -528,6 +534,14 @@ function renderizarCatalogoCompleto() {
   actualizarContadorMostrados(juegosOrdenados.length);
 }
 
+// Actualizar contador catálogo inmediatamente
+const totalCatalogo = document.getElementById('total-catalogo');
+if (totalCatalogo) {
+  totalCatalogo.textContent = todosLosJuegos.length + ' juegos';
+}
+actualizarContadores();
+
+
 let paginaOfertas = 0; // Variable global para página actual
 
 function renderizarOfertas() {
@@ -746,52 +760,59 @@ function actualizarContadorMostrados(cantidad) {
 }
 
 // ===== CARRITO =====
-function agregarAlCarrito(id) {
-    const juego = todosLosJuegos.find(j => j.id == id);
-    if (!juego) return mostrarToast('Juego no encontrado', 'error');
-    
-    const cantidad = parseInt(document.getElementById('modal-cantidad')?.value || 1, 10);
-    const tipoCuenta = document.getElementById('modal-tipo-cuenta')?.value || 'primaria';
-    const plataformaSelect = document.getElementByIdmodal-plataforma-select
-    const plataforma = plataformaSelect ? 
-  plataformaSelect.options[plataformaSelect.selectedIndex].textContent : 
-  juego.plataforma
-
-    
-    if (cantidad < 1 || cantidad > 10) return mostrarToast('Cantidad entre 1-10', 'error');
-    
-    const clave = `${juego.id}-${tipoCuenta}-${plataforma}`;
-
-    // Buscar si el juego está en ofertas
-    const oferta = ofertas.find(o => o.nombre.toLowerCase() === juego.nombre.toLowerCase());
-    let precioUnitario = 0;
-    if (oferta) {
-        precioUnitario = tipoCuenta === 'primaria' ? oferta.primaria : oferta.secundaria;
-    }
-
-    const juegoParaCarrito = { ...juego, plataforma: plataforma };
-
-    const enCarrito = carrito.find(item => item.clave === clave);
-    
-    if (enCarrito) {
-        enCarrito.cantidad = cantidad;
-        enCarrito.plataforma = plataforma;
-        enCarrito.precioUnitario = precioUnitario;
-        mostrarToast(`Actualizado ${cantidad}x ${juego.nombre} (${plataforma})`, 'success');
-    } else {
-        carrito.push({ 
-            ...juegoParaCarrito, 
-            cantidad, 
-            tipoCuenta, 
-            clave,
-            precioUnitario // ← nuevo campo
-        });
-        mostrarToast(`${cantidad}x ${juego.nombre} (${plataforma}) al carrito`, 'success');
-    }
-    
-    actualizarCarrito();
-    guardarCarrito();
+function agregarAlCarrito(id, tipo = 'primaria', plat = 'ps4', cantidad = 1) {
+  const juego = todosLosJuegos.find(j => j.id == id);
+  if (!juego) {
+    mostrarToast('Juego no encontrado', 'error');
+    return;
+  }
+  
+  if (cantidad < 1 || cantidad > 10) {
+    mostrarToast('Cantidad entre 1-10', 'error');
+    return;
+  }
+  
+  // Plataforma del select
+  const plataformaSelect = document.getElementById('modal-plataforma-select');
+  const plataforma = plataformaSelect ? 
+    plataformaSelect.options[plataformaSelect.selectedIndex].textContent.toLowerCase() : 
+    plat.toLowerCase();
+  
+  // Precio ofertas
+  const oferta = ofertas.find(o => 
+    o.nombre.toLowerCase().includes(juego.nombre.toLowerCase())
+  );
+  const precioUnitario = oferta ? 
+    (tipo === 'primaria' ? oferta.primaria : oferta.secundaria) : 
+    14990;
+  
+  const clave = `${juego.id}-${tipo}-${plataforma}`;
+  
+  // Buscar en carrito
+  const enCarrito = carrito.find(item => item.clave === clave);
+  if (enCarrito) {
+    enCarrito.cantidad += cantidad;  // ← SUMA cantidad correcta
+    enCarrito.plataforma = plataforma;
+    enCarrito.precioUnitario = precioUnitario;
+    mostrarToast(`+${cantidad}x ${juego.nombre} ${plataforma}`, 'success');
+  } else {
+    carrito.push({
+      ...juego,
+      cantidad,  // ← cantidad del input (1,2,5...)
+      tipoCuenta: tipo,
+      clave,
+      plataforma,
+      precioUnitario
+    });
+    mostrarToast(`${cantidad}x ${juego.nombre} ${plataforma} agregado`, 'success');
+  }
+  
+  actualizarCarrito();
+  guardarCarrito();
+  actualizarContadores();
 }
+
+
 
 
 function eliminarDelCarrito(clave) {
@@ -949,55 +970,105 @@ function actualizarContadores() {
 
 // ===== MODAL =====
 function abrirModalProducto(id) {
-    const juego = todosLosJuegos.find(j => j.id == id);
-    if (!juego) return mostrarToast('Juego no encontrado', 'error');
-    
-    juegoSeleccionado = juego;
-    const modal = document.getElementById('modal-producto');
-    document.getElementById('modal-titulo').textContent = juego.nombre;
-    document.getElementById('modal-imagen').src = juego.imagen;
-    document.getElementById('modal-plataforma').textContent = juego.plataforma;
-    document.getElementById('modal-cantidad').value = 1;
-    document.getElementById('modal-tipo-cuenta').value = 'primaria';
-    
-    const select = document.getElementById('modal-plataforma-select');
-    select.innerHTML = ''; // Limpiar opciones anteriores
-    select.disabled = false;
-
-    // Lógica para plataformas
-    const plataformas = juego.plataforma.toLowerCase();
-
-if (plataformas.includes("ps5") && !plataformas.includes("ps4")) {
-  // Exclusivo PS5: opción fija PS5, sin poder cambiar
-  const opt = document.createElement("option");
-  opt.value = "ps5";
-  opt.textContent = "PS5";
-  select.appendChild(opt);
-  select.disabled = true;        // evita que el usuario cambie
-} else if (plataformas.includes("ps4") && !plataformas.includes("ps5")) {
-  // Exclusivo PS4
-  const opt = document.createElement("option");
-  opt.value = "ps4";
-  opt.textContent = "PS4";
-  select.appendChild(opt);
-  select.disabled = true;
-} else {
-  // Tiene PS4 y PS5
+  const juego = todosLosJuegos.find(j => j.id == id);
+  if (!juego) return mostrarToast('Juego no encontrado', 'error');
+  
+  juegoSeleccionado = juego;
+  
+  // Cachear elementos DOM
+  const modal = document.getElementById('modal-producto');
+  const titulo = document.getElementById('modal-titulo');
+  const imagen = document.getElementById('modal-imagen');
+  const plataforma = document.getElementById('modal-plataforma');
+  const cantidad = document.getElementById('modal-cantidad');
+  const tipoCuenta = document.getElementById('modal-tipo-cuenta');
+  const select = document.getElementById('modal-plataforma-select');
+  
+  // Datos básicos
+  titulo.textContent = juego.nombre;
+  imagen.src = juego.imagen;
+  imagen.alt = juego.nombre;
+  plataforma.textContent = juego.plataforma;
+  cantidad.value = 1;
+  tipoCuenta.value = 'primaria';
+  
+  // Plataformas
+  select.innerHTML = '';
   select.disabled = false;
-  const opt1 = document.createElement("option");
-  opt1.value = "ps4";
-  opt1.textContent = "PS4";
-  select.appendChild(opt1);
-
-  const opt2 = document.createElement("option");
-  opt2.value = "ps5";
-  opt2.textContent = "PS5";
-  select.appendChild(opt2);
-}
-
+  const plataformas = juego.plataforma.toLowerCase();
+  
+  if (plataformas.includes("ps5") && !plataformas.includes("ps4")) {
+    const opt = document.createElement("option");
+    opt.value = "ps5";
+    opt.textContent = "PS5";
+    select.appendChild(opt);
+    select.disabled = true;
+  } else if (plataformas.includes("ps4") && !plataformas.includes("ps5")) {
+    const opt = document.createElement("option");
+    opt.value = "ps4";
+    opt.textContent = "PS4";
+    select.appendChild(opt);
+    select.disabled = true;
+  } else {
+    const opt1 = document.createElement("option");
+    opt1.value = "ps4";
+    opt1.textContent = "PS4";
+    select.appendChild(opt1);
     
-    modal.classList.add('activo');
+    const opt2 = document.createElement("option");
+    opt2.value = "ps5";
+    opt2.textContent = "PS5";
+    select.appendChild(opt2);
+    select.disabled = false;
+  }
+  
+  // 🔥 FIX DEFINITIVO 100% ANTI-DUPLICADOS
+  const btnAgregar = document.getElementById('modal-btn-agregar');
+  
+  // 1️⃣ CLONE + REPLACE = 0 LISTENERS
+  const nuevoBtn = btnAgregar.cloneNode(true);
+  btnAgregar.parentNode.replaceChild(nuevoBtn, btnAgregar);
+  
+  // 2️⃣ NUEVO BOTÓN LIMPIO
+  const btnLimpiado = document.getElementById('modal-btn-agregar');
+  
+  // 3️⃣ SINGLE LISTENER CON PROTECCIÓN
+  btnLimpiado.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    
+    // ❌ BLOQUEA DOBLES EJECUCIONES
+    if (btnLimpiado.disabled) return;
+    
+    btnLimpiado.disabled = true;
+    btnLimpiado.textContent = '⏳ Agregando...';
+    
+    const cant = parseInt(cantidad.value) || 1;
+    const tipo = tipoCuenta.value || 'primaria';
+    const plat = select.value || 'ps4';
+    
+    agregarAlCarrito(juego.id, tipo, plat, cant);
+    
+    modal.classList.remove('activo');
+    juegoSeleccionado = null;
+    
+    mostrarToast(`${juego.nombre} (${cant}x ${tipo} ${plat.toUpperCase()}) ¡Agregado!`, 'success');
+    actualizarContadores();
+    
+    // 🔄 RESET EN 2 SEG
+    setTimeout(() => {
+      btnLimpiado.disabled = false;
+      btnLimpiado.textContent = 'Agregar al carrito';
+    }, 2000);
+  }, { once: false }); // Se puede reutilizar pero con protecciones
+  
+  modal.classList.add('activo');
 }
+
+
+
+
 
 function abrirModalOferta(index) {
   const oferta = ofertas[index];
