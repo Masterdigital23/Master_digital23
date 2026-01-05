@@ -498,20 +498,25 @@ header {
 }
 
 .producto-plataforma {
-    background-color: #0f3460;
-    color: #eee;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    display: inline-block;
-    margin-bottom: 0.8rem;
-    font-weight: 600;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .producto-plataforma.ps5-exclusive {
     background: linear-gradient(135deg, #e94560 0%, #d63651 100%);
     font-weight: bold;
     box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+.producto-card.ps5-exclusive .producto-plataforma {
+  background: linear-gradient(135deg, #00d4ff, #0099cc);
+  color: white;
+  font-weight: bold;
 }
 
 .producto-titulo {
