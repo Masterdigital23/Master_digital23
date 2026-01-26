@@ -1,5 +1,3 @@
-
-
 // Base de datos completa de juegos
 const juegosPS4PS5 = [
     { id: 1, nombre: "A Way Out", plataforma: "PS4 / PS5", imagen: "https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA07995_00/2/i_bf9451994583c160b23f72d11b5c28cdf341e271b35509d51696c3d833fb650b/i/icon0.png" },
@@ -1385,6 +1383,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Soporte touch para tarjetas
+document.querySelectorAll('.producto-card, .acceso-card').forEach(card => {
+  card.addEventListener('touchstart', () => card.style.transform = 'scale(0.98)');
+  card.addEventListener('touchend', () => card.style.transform = '');
+});
+
+// Previene zoom en inputs móviles
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('focus', () => document.body.style.zoom = '0.99');
+  el.addEventListener('blur', () => document.body.style.zoom = '');
+});
+
 
 // ===== MODALES LEGALES - VERSIÓN CORREGIDA =====
 document.addEventListener('click', function(e) {
