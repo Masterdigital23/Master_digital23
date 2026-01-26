@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Garantía - Master Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .certificado-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* HEADER DEL CERTIFICADO */
+        .certificado-header {
+            background: linear-gradient(135deg, #1a1e3a 0%, #16213e 100%);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 5px solid #e94560;
+            position: relative;
+        }
+
+        .certificado-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e94560, #00e676, #e94560);
+        }
+
+        .header-logo {
+            max-width: 120px;
+            margin-bottom: 15px;
+            filter: brightness(1.1);
+        }
+
+        .header-titulo {
+            color: #e94560;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-subtitulo {
+            color: #00e676;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .header-fecha {
+            color: #999;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .certificado-contenido {
+            padding: 50px 40px;
+            color: #333;
+        }
+
+        .seccion {
+            margin-bottom: 35px;
+        }
+
+        .seccion-titulo {
+            color: #e94560;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e94560;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00e676;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-valor {
+            color: #1a1e3a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .info-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        /* TÉRMINOS */
+        .terminos {
+            background: linear-gradient(135deg, #fff5f5 0%, #f5f5ff 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e94560;
+            margin: 25px 0;
+        }
+
+        .terminos ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .terminos li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .terminos li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00e676;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .terminos.no-cover li::before {
+            content: '✗';
+            color: #e94560;
+        }
+
+        /* CONTACTO */
+        .contacto-box {
+            background: linear-gradient(135deg, #e94560 0%, #d63651 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .contacto-box h4 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contacto-item {
+            padding: 8px 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        /* PIE DE PÁGINA */
+        .certificado-footer {
+            background: #f8f8f8;
+            padding: 40px;
+            border-top: 5px solid #e94560;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .firma-box {
+            text-align: center;
+        }
+
+        .firma-linea {
+            border-top: 2px solid #333;
+            margin: 60px 0 10px 0;
+            width: 100%;
+        }
+
+        .firma-titulo {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .advertencia {
+            background: linear-gradient(135deg, #00e67620 0%, #e9456020 100%);
+            border: 2px solid #00e676;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+
+        .advertencia-titulo {
+            color: #00e676;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .advertencia-texto {
+            color: #333;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* BOTONES IMPRESIÓN */
+        .acciones {
+            padding: 20px 40px;
+            background: #f8f8f8;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-imprimir {
+            background: linear-gradient(135deg, #e94560 0%, #d63651 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-imprimir:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(233, 69, 96, 0.5);
+        }
+
+        .btn-descargar {
+            background: linear-gradient(135deg, #00e676 0%, #00c67f 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
+        }
+
+        .btn-descargar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 230, 118, 0.5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .certificado-contenido {
+                padding: 30px 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .certificado-footer {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .header-titulo {
+                font-size: 1.8rem;
+            }
+
+            .acciones {
+                padding: 15px 20px;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* IMPRESIÓN */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .acciones {
+                display: none;
+            }
+
+            .certificado-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificado-container">
+        <!-- HEADER -->
+        <div class="certificado-header">
+            <img src="img/logo-masterdigital.png" alt="Master Digital" class="header-logo">
+            <h1 class="header-titulo">Certificado de Garantía</h1>
+            <p class="header-subtitulo">Garantía Ilimitada en Cuentas Digitales</p>
+            <p class="header-fecha" id="fecha-generado">Generado el 26 de Enero, 2026</p>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="certificado-contenido">
+            <!-- INFORMACIÓN DEL CLIENTE -->
+            <div class="seccion">
+                <h2 class="seccion-titulo">Información del Cliente</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre del Cliente</div>
+                        <div class="info-valor" id="cliente-nombre">----------------</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-valor" id="cliente-telefono">+56 9 8765 4321</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETALLES DE LA COMPRA -->
+            <div class="seccion">
+                <h2 class="seccion-titulo">Detalles de la Compra</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">N° de Pedido</div>
+                        <div class="info-valor" id="pedido-numero">MD-2026-001234</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha de Compra</div>
+                        <div class="info-valor" id="pedido-fecha">xx/xx/xxxx</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Juegos Incluidos</div>
+                        <div class="info-valor" id="pedido-juegos">FC 26, GTA 5, Call of Duty</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tipo de Cuenta</div>
+                        <div class="info-valor" id="pedido-tipo">Primaria / Secundaria</div>
+                    </div>
+                </div>
+                <div class="info-grid full">
+                    <div class="info-item">
+                        <div class="info-label">Plataforma</div>
+                        <div class="info-valor" id="pedido-plataforma">PS4 / PS5</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TÉRMINOS DE GARANTÍA -->
+            <div class="seccion">
+                <h2 class="seccion-titulo">Términos de Garantía</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Período de Garantía</div>
+                        <div class="info-valor">Ilimitada</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Vigencia Hasta</div>
+                        <div class="info-valor" id="garantia-vence">Permanente mientras se use la cuenta</div>
+                    </div>
+                </div>
+                <div class="info-grid full">
+                    <div class="info-item">
+                        <div class="info-label">Tipo de Garantía</div>
+                        <div class="info-valor">Reemplazo Gratuito e Inmediato por Fallas Técnicas</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #00e676; margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">✓ La Garantía Cubre:</h3>
+                <div class="terminos">
+                    <ul>
+                        <li>Cuenta que no inicia o da error al conectarse</li>
+                        <li>Juego que no descarga o falla en la instalación</li>
+                        <li>Bloqueos o restricciones de PSN impredecibles</li>
+                        <li>Errores de compatibilidad con la plataforma</li>
+                        <li>Reemplazo gratuito en 15-60 minutos</li>
+                        <li>Soporte técnico 24/7 por WhatsApp</li>
+                    </ul>
+                </div>
+
+                <h3 style="color: #e94560; margin-top: 25px; margin-bottom: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">✗ La Garantía NO Cubre:</h3>
+                <div class="terminos no-cover">
+                    <ul>
+                        <li>Cambios de email o contraseña por el cliente</li>
+                        <li>Compartir credenciales con terceros</li>
+                        <li>Uso de la cuenta en múltiples consolas simultáneamente</li>
+                        <li>Borrado intencional de datos de la cuenta</li>
+                        <li>Mal uso o negligencia del cliente</li>
+                        <li>Reparaciones por técnicos no autorizados</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- INFORMACIÓN DE LA EMPRESA -->
+            <div class="seccion">
+                <h2 class="seccion-titulo">Información de Master Digital</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Razón Social</div>
+                        <div class="info-valor">Master Digital - Israel Monarez</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">RUT</div>
+                        <div class="info-valor">22.274.234-K</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">WhatsApp</div>
+                        <div class="info-valor">+56 9 9487 7783</div>
+                    </div>
+                </div>
+                <div class="info-grid full">
+                    <div class="info-item">
+                        <div class="info-label">Instagram</div>
+                        <div class="info-valor">@Master_digital23</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACTO SOPORTE -->
+            <div class="contacto-box">
+                <h4>Servicio Técnico Autorizado</h4>
+                <div class="contacto-item">📱 WhatsApp: +56 9 9487 7783</div>
+                <div class="contacto-item">🕐 Disponible: 10:00 - 22:00 hrs, Todos los días</div>
+                <div class="contacto-item">📧 Respuesta garantizada en menos de 2 minutos</div>
+            </div>
+
+            <!-- CONDICIONES IMPORTANTES -->
+            <div class="seccion">
+                <h2 class="seccion-titulo">Condiciones y Responsabilidades</h2>
+                <div class="terminos">
+                    <ul>
+                        <li><strong>Validez:</strong> Este certificado es válido solo presentado con el comprobante de pago original</li>
+                        <li><strong>No transferible:</strong> La garantía es personal del comprador y no se transfiere a terceros</li>
+                        <li><strong>Conservación:</strong> Mantén este documento en un lugar seguro</li>
+                        <li><strong>Responsabilidad del cliente:</strong> No compartir datos, usar en una sola consola, no cambiar email</li>
+                        <li><strong>Activación:</strong> Guarda este PDF e imprímelo si es necesario para hacer válida la garantía</li>
+                        <li><strong>Reemplazo inmediato:</strong> Contacta por WhatsApp con N° de pedido y descripción del problema</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        
+            <div class="firma-box">
+                <p style="color: #666; margin-bottom: 10px; font-weight: 600;">Firma y Sello Master Digital</p>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 30px;">Autorizado por Israel Monarez</p>
+                <div class="firma-linea"></div>
+                <p class="firma-titulo">Master Digital - Chile</p>
+            </div>
+            <div class="advertencia">
+                <p class="advertencia-titulo">⚠️ Documento Oficial</p>
+                <p class="advertencia-texto">
+                    Este certificado es válido como comprobante de garantía. <br>
+                    Guárdalo en un lugar seguro. Imprime si es necesario.
+                </p>
+            </div>
+        </div>
+
+        
+
+    <script>
+        // Actualizar fecha actual
+        function actualizarFecha() {
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric', locale: 'es-CL' };
+            const hoy = new Date();
+            const fechaFormato = hoy.toLocaleDateString('es-CL', opciones);
+            document.getElementById('fecha-generado').textContent = `Generado el ${fechaFormato}`;
+        }
+
+
+
+        // Ejecutar al cargar
+        document.addEventListener('DOMContentLoaded', actualizarFecha);
+
+        // Permitir editar datos antes de imprimir (opcional)
+        function editarCertificado() {
+            const nombre = prompt('Nombre del cliente:', document.getElementById('cliente-nombre').textContent);
+            if (nombre) document.getElementById('cliente-nombre').textContent = nombre;
+            
+            const juegos = prompt('Juegos:', document.getElementById('pedido-juegos').textContent);
+            if (juegos) document.getElementById('pedido-juegos').textContent = juegos;
+        }
+    </script>
+</body>
+</html>
